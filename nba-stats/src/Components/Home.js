@@ -19,7 +19,8 @@ function Home() {
 
     const getPlayer = () => {
         Axios.get(url).then(async (response) => {
-            console.log(response);
+
+            // console.log(response);
 
             let list = [];
 
@@ -32,7 +33,7 @@ function Home() {
         });
     }
 
-    console.log(playerList);
+    // console.log(playerList);
 
     // when player clicks search, search the api for it and display the name results
     const handleSearch = () => {
@@ -73,21 +74,23 @@ function Home() {
             <button onClick={handleSearch}>Search</button>
             
             <div className='results' style={{display: playerSelected ? "none" : "block"}}>
+
                 <h5>Results:</h5>
                 <ul>
                     {playerList.map(function(player) {
                         return  <li value = {player.id} onClick={handleSelect} onMouseOver={handleHover} onMouseLeave={handleLeave} className='playerList' key= {player.id}>{player.first_name} {player.last_name} - {player.team.full_name}</li>
                     })}
                 </ul>
-                {/* <p>Chosen player ID: {selected}</p> */}
-
-                {/* <Link to={{pathname: "/stats", state:{player: selected}}} player={selected}>View Stats</Link> */}
     
             </div>
 
-            <div style={{display: playerSelected ? 'block': 'none'}}>
-                <Stats player={selected}/>
-            </div>
+            {playerSelected ? <Stats player={selected}/> : void(0)}
+
+            {/* <div style={{display: playerSelected ? 'block': 'none'}}>
+
+                    <Stats player={selected}/>
+
+            </div> */}
             
         </header>
     )
