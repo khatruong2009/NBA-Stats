@@ -41,6 +41,7 @@
 
 .playerList {
   list-style: none;
+  margin-top: 25px;
 }
 
 input {
