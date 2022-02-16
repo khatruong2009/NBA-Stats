@@ -6,21 +6,13 @@ function Home() {
 
     let [playerList, setPlayerList] = useState([]);
 
-    let players = [];
+    let [search, setSearch] = useState("");
 
-    let [playerName, setPlayerName] = useState("");
-
-    let name;
-
-    let data;
-
-    const url = "https://www.balldontlie.io/api/v1/players?search=rui";
+    const url = "https://www.balldontlie.io/api/v1/players?search=" + search;
 
     const getPlayer = () => {
         Axios.get(url).then(async (response) => {
             console.log(response);
-
-            await setPlayerName(response.data.data[0].first_name + " " + response.data.data[0].last_name);
 
             let list = [];
 
@@ -34,10 +26,14 @@ function Home() {
     }
 
     useEffect(() => {
-        getPlayer();
+        //getPlayer();
     }, [])
 
     console.log(playerList);
+
+    const handleSearch = () => {
+        getPlayer();  
+    }
 
     return (
         <header className="App-header">
@@ -45,7 +41,8 @@ function Home() {
             <h1>NBA Stats</h1> 
 
             <h4>Player Search:</h4>
-            <input></input>
+            <input type="text" onChange={event => setSearch(event.target.value)}></input>
+            <button onClick={handleSearch}>Search</button>
             
             <div className='results'>
                 <h5>Results:</h5>
