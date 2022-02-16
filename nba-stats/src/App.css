@@ -36,3 +36,23 @@
     transform: rotate(360deg);
   }
 }
+
+/*Home Page CSS*/
+
+.playerList {
+  list-style: none;
+}
+
+input {
+  margin-top: none;
+  width: 25%;
+}
+
+h4 {
+  margin-bottom: 10px;
+}
+
+.results h5 {
+  margin-top: 20%;
+  margin-bottom: 25px;
+}
