@@ -9,6 +9,11 @@ function Stats(props) {
     let [assists, setAssists] = useState();
     let [rebounds, setRebounds] = useState();
     let [threes, setThrees] = useState();
+    let [name, setName] = useState("");
+
+    let [team, setTeam] = useState(0);
+
+    let [gameIds, setGameIds] = useState([]);
 
     // get the player season average stats from the API
     const url = "https://www.balldontlie.io/api/v1/season_averages?season=2021&player_ids[]=" + props.player;
@@ -24,8 +29,6 @@ function Stats(props) {
         });
     }
 
-    let [name, setName] = useState("");
-
     // get player name from API
     const nameURL = "https://www.balldontlie.io/api/v1/players/" + props.player;
 
@@ -33,26 +36,41 @@ function Stats(props) {
 
         Axios.get(nameURL).then(async (response) => {
 
-            await setName(response.data.first_name + " " + response.data.last_name);
+            setName(response.data.first_name + " " + response.data.last_name);
+            setTeam(response.data.team.id);
 
         })
 
     }
 
+    // get last 10 game stats
+    const gameURL = "https://www.balldontlie.io/api/v1/games?seasons[]=2021&per_page=100&team_ids[]=" + team;
+
+    const getGameStats = () => {
+        Axios.get(gameURL).then(async (response) => {
+
+            console.log(await response.data);
+
+            let games = [];
+            for (let i = 0; i < response.data.data.length; i++) {
+                games.push(response.data.data[i]);
+            }
+
+            setGameIds(games);
+        })
+    }
+
+    console.log(gameIds);
+
     useEffect(() => {
         getStats();
         getPlayerName();
+        getGameStats();
     },[])
 
     return (
         <div className='App-header' style={{minHeight: "0"}}>
             <h3>{name} Season Averages: </h3>
-            {/* <ul>
-                <li>Points: {points}</li>
-                <li>Assists: {assists}</li>
-                <li>Rebounds: {rebounds}</li>
-                <li>3s per Game: {threes}</li>
-            </ul> */}
 
             <table>
                 <tbody>
@@ -77,8 +95,10 @@ function Stats(props) {
                         <td className='stat'>{threes}</td>
                     </tr>
                 </tbody>
-                
             </table>
+
+            <button onClick={getGameStats}>Refresh</button>
+
         </div>
     )
 

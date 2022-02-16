@@ -69,6 +69,8 @@ function Home() {
 
             <h1>NBA Stats</h1> 
 
+            <button onClick={() => window.location.reload(false)}>Restart Search</button>
+
             <h4>Player Search:</h4>
             <input onKeyDown={handleKeyPress} type="text" onChange={event => setSearch(event.target.value)}></input>
             <button onClick={handleSearch}>Search</button>
@@ -85,12 +87,6 @@ function Home() {
             </div>
 
             {playerSelected ? <Stats player={selected}/> : void(0)}
-
-            {/* <div style={{display: playerSelected ? 'block': 'none'}}>
-
-                    <Stats player={selected}/>
-
-            </div> */}
             
         </header>
     )
