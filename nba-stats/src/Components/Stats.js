@@ -22,7 +22,11 @@ function Stats(props) {
     let month = String(today.getMonth() + 1).padStart(2, '0');
     let year = today.getFullYear();
 
-    let season = (month <= 5 ? year - 1 : year)
+    let season = (month <= 5 ? year - 1 : year);
+
+    let [lastTenGameIds, setLastTenGameIds] = useState([]);
+
+    let [lastTenPlayerStats, setLastTenPlayerStats] = useState([]);
 
     // get the player season average stats from the API
     const url = "https://www.balldontlie.io/api/v1/season_averages?season=" + season + "&player_ids[]=" + props.player;
@@ -94,14 +98,46 @@ function Stats(props) {
 
         } 
 
-        console.log(gameIds);
-        console.log(filteredGames);
+        // console.log(gameIds);
+        // console.log(filteredGames);
+    }
+
+    //get stats for player in those last 10 games
+    const getLastTenStats = () => {
+
+        for (let i = 0; i < filteredGames.length; i++) {
+            setLastTenGameIds(lastTenGameIds => [...lastTenGameIds, filteredGames[i].id]);
+        }
+
+        const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + lastTenGameIds[0] + "&game_ids[]=" + lastTenGameIds[1] + "&game_ids[]=" + lastTenGameIds[2] + "&game_ids[]=" + lastTenGameIds[3] + "&game_ids[]=" + lastTenGameIds[4] + "&game_ids[]=" + lastTenGameIds[5] + "&game_ids[]=" + lastTenGameIds[6] + "&game_ids[]=" + lastTenGameIds[7] + "&game_ids[]=" + lastTenGameIds[8] + "&game_ids[]=" + lastTenGameIds[9];
+
+        Axios.get(statsUrl).then(async (response) => {
+            
+            let temp = [];
+            for (let i = 0; i < response.data.data.length; i++) {
+                temp.push(response.data.data[i]);
+            }
+
+            setLastTenPlayerStats(temp);
+
+            lastTenPlayerStats.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
+
+        })
+
+        console.log(lastTenPlayerStats);
+
+    }
+
+    const updateStats = () => {
+        getGameStats();
+        getLastTenStats();
     }
 
     useEffect(() => {
         getStats();
         getPlayerName();
         getGameStats();
+        getLastTenStats();
     },[])
 
     return (
@@ -133,9 +169,14 @@ function Stats(props) {
                 </tbody>
             </table>
 
-            <button onClick={getGameStats}>Refresh</button>
+            <button onClick={updateStats}>Refresh</button>
 
             <h3>{name} Last 10 Games:</h3>
+            <ul>
+                {lastTenPlayerStats.map( (game) => {
+                    return <li key={game.game.id}>Points: {game.pts} Assists: {game.ast} Rebounds: {game.reb} 3s Made: {game.fg3m}</li>
+                } )}
+            </ul>
 
         </div>
     )
