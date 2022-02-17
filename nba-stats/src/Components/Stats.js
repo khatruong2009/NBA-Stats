@@ -46,17 +46,16 @@ function Stats(props) {
     const getPlayerName = () => {
 
         Axios.get(nameURL).then(async (response) => {
-
+            getGameStats(response.data.team.id);
             setName(response.data.first_name + " " + response.data.last_name);
             setTeam(response.data.team.id);
-
         })
 
     }
 
     // get last 10 game stats
-    const getGameStats = () => {
-        const gameURL = "https://www.balldontlie.io/api/v1/games?seasons[]=" + season + "&per_page=100&team_ids[]=" + team;
+    const getGameStats = (teamId) => {
+        const gameURL = "https://www.balldontlie.io/api/v1/games?seasons[]=" + season + "&per_page=100&team_ids[]=" + teamId;
 
         Axios.get(gameURL).then(async (response) => {
 
@@ -93,26 +92,23 @@ function Stats(props) {
                 games = games.splice(0, 10);
                 console.log(games);
 
+                getLastTenStats(games);
                 setFilteredGames(games);
-
             } 
-        }).then(getLastTenStats())
-
-        // console.log(gameIds);
-        // console.log(filteredGames);
+        })
     }
 
     //get stats for player in those last 10 games
-    const getLastTenStats = () => {
+    const getLastTenStats = (games) => {
 
         let temp1 = [];
-        for (let i = 0; i < filteredGames.length; i++) {
-            temp1.push(filteredGames[i].id);
+        for (let i = 0; i < games.length; i++) {
+            temp1.push(games[i].id);
         }
 
         setLastTenGameIds(temp1);
 
-        const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + lastTenGameIds[0] + "&game_ids[]=" + lastTenGameIds[1] + "&game_ids[]=" + lastTenGameIds[2] + "&game_ids[]=" + lastTenGameIds[3] + "&game_ids[]=" + lastTenGameIds[4] + "&game_ids[]=" + lastTenGameIds[5] + "&game_ids[]=" + lastTenGameIds[6] + "&game_ids[]=" + lastTenGameIds[7] + "&game_ids[]=" + lastTenGameIds[8] + "&game_ids[]=" + lastTenGameIds[9];
+        const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + temp1[0] + "&game_ids[]=" + temp1[1] + "&game_ids[]=" + temp1[2] + "&game_ids[]=" + temp1[3] + "&game_ids[]=" + temp1[4] + "&game_ids[]=" + temp1[5] + "&game_ids[]=" + temp1[6] + "&game_ids[]=" + temp1[7] + "&game_ids[]=" + temp1[8] + "&game_ids[]=" + temp1[9];
 
         Axios.get(statsUrl).then(async (response) => {
             
@@ -123,22 +119,16 @@ function Stats(props) {
 
             let temp2 = temp.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
             setLastTenPlayerStats(temp2);
-
-            // console.log(lastTenPlayerStats);
         })
-
     }
 
     const updateStats = () => {
-        getGameStats();
-        // getLastTenStats();
+        getPlayerName();
     }
 
     useEffect(() => {
         getStats();
         getPlayerName();
-        getGameStats();
-        // getLastTenStats();
     },[])
 
     return (
