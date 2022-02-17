@@ -112,6 +112,7 @@ function Stats(props) {
 
         Axios.get(statsUrl).then(async (response) => {
             
+            console.log(response);
             let temp = [];
             for (let i = 0; i < response.data.data.length; i++) {
                 temp.push(response.data.data[i]);
