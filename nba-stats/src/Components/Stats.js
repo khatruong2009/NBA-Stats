@@ -13,8 +13,6 @@ function Stats(props) {
 
     let [team, setTeam] = useState(0);
 
-    let [gameIds, setGameIds] = useState([]);
-
     let [filteredGames, setFilteredGames] = useState([]);
 
     let today = new Date();
@@ -68,40 +66,40 @@ function Stats(props) {
                 games.push(response.data.data[i]);
             }
 
-            // store all of the games into gameIds state
-            setGameIds(games);
-        })
+            // sort the games by ID so that we get the newest ones first
+            if (games.length > 0) {
 
-        // sort the games by ID so that we get the newest ones first
-        if (gameIds.length > 0) {
+                games.sort((a, b) => (a.id > b.id) ? -1 : 1);
 
-            gameIds.sort((a, b) => (a.id > b.id) ? -1 : 1);
+                // remove games that haven't happened eyt
+                games = (games.filter((game => {
+                    let split = game.date.toString().split("").splice(0,10);
+                    split = split.filter(letter => letter != '-');
+                    let yearComp = parseInt(split.splice(0,4).join(""));
+                    let monthComp = parseInt(split.splice(0, 2).join(""));
+                    let dayComp = parseInt(split.splice(0, 2).join(""));
 
-            // remove games that haven't happened eyt
-            filteredGames = (gameIds.filter((game => {
-                let split = game.date.toString().split("").splice(0,10);
-                split = split.filter(letter => letter != '-');
-                let yearComp = parseInt(split.splice(0,4).join(""));
-                let monthComp = parseInt(split.splice(0, 2).join(""));
-                let dayComp = parseInt(split.splice(0, 2).join(""));
+                    if (yearComp == year && monthComp < month) {
+                        return true;
+                    } else if (yearComp < year) {
+                        return true;
+                    } else if (yearComp == year && monthComp == month && dayComp < day) {
+                        return true;
+                    }
+                    
+                    return false;
+                })));
 
-                if (yearComp == year && monthComp < month) {
-                    return true;
-                } else if (yearComp < year) {
-                    return true;
-                } else if (yearComp == year && monthComp == month && dayComp < day) {
-                    return true;
-                }
-                
-                return false;
-            })));
+                games = games.splice(0, 10);
+                console.log(games);
 
-            setFilteredGames(filteredGames.splice(10));
+                setFilteredGames(games);
 
-        } 
+            } 
+        }).then(getLastTenStats())
 
         // console.log(gameIds);
-        console.log(filteredGames);
+        // console.log(filteredGames);
     }
 
     //get stats for player in those last 10 games
@@ -123,27 +121,24 @@ function Stats(props) {
                 temp.push(response.data.data[i]);
             }
 
-            // setLastTenPlayerStats(temp);
-
             let temp2 = temp.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
             setLastTenPlayerStats(temp2);
 
+            // console.log(lastTenPlayerStats);
         })
-
-        console.log(lastTenPlayerStats);
 
     }
 
     const updateStats = () => {
         getGameStats();
-        getLastTenStats();
+        // getLastTenStats();
     }
 
     useEffect(() => {
         getStats();
         getPlayerName();
         getGameStats();
-        getLastTenStats();
+        // getLastTenStats();
     },[])
 
     return (
