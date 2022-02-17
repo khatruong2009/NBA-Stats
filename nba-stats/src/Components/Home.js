@@ -69,6 +69,7 @@ function Home() {
 
             <h1>NBA Stats</h1> 
 
+            {/* refresh the page to restart the search */}
             <button onClick={() => window.location.reload(false)}>Restart Search</button>
 
             <h4>Player Search:</h4>

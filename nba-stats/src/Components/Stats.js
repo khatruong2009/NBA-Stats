@@ -15,8 +15,17 @@ function Stats(props) {
 
     let [gameIds, setGameIds] = useState([]);
 
+    let [filteredGames, setFilteredGames] = useState([]);
+
+    let today = new Date();
+    let day = String(today.getDate()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0');
+    let year = today.getFullYear();
+
+    let season = (month <= 5 ? year - 1 : year)
+
     // get the player season average stats from the API
-    const url = "https://www.balldontlie.io/api/v1/season_averages?season=2021&player_ids[]=" + props.player;
+    const url = "https://www.balldontlie.io/api/v1/season_averages?season=" + season + "&player_ids[]=" + props.player;
 
     const getStats = () => {
         Axios.get(url).then(async (response) => {
@@ -44,23 +53,50 @@ function Stats(props) {
     }
 
     // get last 10 game stats
-    const gameURL = "https://www.balldontlie.io/api/v1/games?seasons[]=2021&per_page=100&team_ids[]=" + team;
-
     const getGameStats = () => {
+        const gameURL = "https://www.balldontlie.io/api/v1/games?seasons[]=" + season + "&per_page=100&team_ids[]=" + team;
+
         Axios.get(gameURL).then(async (response) => {
 
-            console.log(await response.data);
-
             let games = [];
+
             for (let i = 0; i < response.data.data.length; i++) {
                 games.push(response.data.data[i]);
             }
 
+            // store all of the games into gameIds state
             setGameIds(games);
         })
-    }
 
-    console.log(gameIds);
+        // sort the games by ID so that we get the newest ones first
+        if (gameIds.length > 0) {
+
+            gameIds.sort((a, b) => (a.id > b.id) ? -1 : 1);
+
+            // remove games that haven't happened eyt
+            filteredGames = (gameIds.filter((game => {
+                let split = game.date.toString().split("").splice(0,10);
+                split = split.filter(letter => letter != '-');
+                let yearComp = parseInt(split.splice(0,4).join(""));
+                let monthComp = parseInt(split.splice(0, 2).join(""));
+                let dayComp = parseInt(split.splice(0, 2).join(""));
+
+                if (yearComp == year && monthComp <= month && dayComp < day) {
+                    return true;
+                } else if (yearComp < year) {
+                    return true;
+                }
+                
+                return false;
+            })));
+
+            setFilteredGames(filteredGames.splice(10));
+
+        } 
+
+        console.log(gameIds);
+        console.log(filteredGames);
+    }
 
     useEffect(() => {
         getStats();
@@ -98,6 +134,8 @@ function Stats(props) {
             </table>
 
             <button onClick={getGameStats}>Refresh</button>
+
+            <h3>{name} Last 10 Games:</h3>
 
         </div>
     )
