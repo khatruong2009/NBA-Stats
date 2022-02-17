@@ -85,9 +85,11 @@ function Stats(props) {
                 let monthComp = parseInt(split.splice(0, 2).join(""));
                 let dayComp = parseInt(split.splice(0, 2).join(""));
 
-                if (yearComp == year && monthComp <= month && dayComp < day) {
+                if (yearComp == year && monthComp < month) {
                     return true;
                 } else if (yearComp < year) {
+                    return true;
+                } else if (yearComp == year && monthComp == month && dayComp < day) {
                     return true;
                 }
                 
@@ -99,15 +101,18 @@ function Stats(props) {
         } 
 
         // console.log(gameIds);
-        // console.log(filteredGames);
+        console.log(filteredGames);
     }
 
     //get stats for player in those last 10 games
     const getLastTenStats = () => {
 
+        let temp1 = [];
         for (let i = 0; i < filteredGames.length; i++) {
-            setLastTenGameIds(lastTenGameIds => [...lastTenGameIds, filteredGames[i].id]);
+            temp1.push(filteredGames[i].id);
         }
+
+        setLastTenGameIds(temp1);
 
         const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + lastTenGameIds[0] + "&game_ids[]=" + lastTenGameIds[1] + "&game_ids[]=" + lastTenGameIds[2] + "&game_ids[]=" + lastTenGameIds[3] + "&game_ids[]=" + lastTenGameIds[4] + "&game_ids[]=" + lastTenGameIds[5] + "&game_ids[]=" + lastTenGameIds[6] + "&game_ids[]=" + lastTenGameIds[7] + "&game_ids[]=" + lastTenGameIds[8] + "&game_ids[]=" + lastTenGameIds[9];
 
@@ -118,9 +123,10 @@ function Stats(props) {
                 temp.push(response.data.data[i]);
             }
 
-            setLastTenPlayerStats(temp);
+            // setLastTenPlayerStats(temp);
 
-            lastTenPlayerStats.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
+            let temp2 = temp.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
+            setLastTenPlayerStats(temp2);
 
         })
 
@@ -144,26 +150,19 @@ function Stats(props) {
         <div className='App-header' style={{minHeight: "0"}}>
             <h3>{name} Season Averages: </h3>
 
-            <table>
+            <table className='seasonAverages'>
                 <tbody>
                     <tr className='headerRow'>
-                        <th>Statistic</th>
-                        <th className='stat'>Average</th>
+                        {/* <th>Statistic</th> */}
+                        <th className='stat'>Points</th>
+                        <th className='stat'>Assists</th>
+                        <th className='stat'>Rebounds</th>
+                        <th className='stat'>3s Per Game</th>
                     </tr>
                     <tr>
-                        <td>Points:</td>
                         <td className='stat'>{points}</td>
-                    </tr>
-                    <tr>
-                        <td>Assists:</td>
                         <td className='stat'>{assists}</td>
-                    </tr>
-                    <tr>
-                        <td>Rebounds:</td>
                         <td className='stat'>{rebounds}</td>
-                    </tr>
-                    <tr>
-                        <td>3s Made Per Game:</td>
                         <td className='stat'>{threes}</td>
                     </tr>
                 </tbody>
@@ -171,12 +170,33 @@ function Stats(props) {
 
             <button onClick={updateStats}>Refresh</button>
 
-            <h3>{name} Last 10 Games:</h3>
-            <ul>
-                {lastTenPlayerStats.map( (game) => {
-                    return <li key={game.game.id}>Points: {game.pts} Assists: {game.ast} Rebounds: {game.reb} 3s Made: {game.fg3m}</li>
-                } )}
-            </ul>
+            <h3>{name} Last 10 Games (Played):</h3>
+
+            <table className='lastTen'>
+                <tbody>
+
+                    <tr className='headerRow'>
+
+                        <th>Date</th>
+                        <th>Points</th>
+                        <th>Assists</th>
+                        <th>Rebounds</th>
+                        <th>3s Made</th>
+
+                    </tr>
+
+                    {lastTenPlayerStats.map((game) => {
+                        return <tr className='lastTenRow' key={game.game.id}>
+                            <td className='lastTenRow'>{game.game.date.toString().substr(0, 10)}</td>
+                            <td className='lastTenRow'>{game.pts}</td>
+                            <td className='lastTenRow'>{game.ast}</td>
+                            <td className='lastTenRow'>{game.reb}</td>
+                            <td className='lastTenRow'>{game.fg3m}</td>
+                        </tr>
+                    })}
+
+                </tbody>
+            </table>
 
         </div>
     )
