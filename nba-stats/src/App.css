@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  padding-bottom: 10%;
+  background-color: #282c34;
 }
 
 .App-logo {
@@ -48,6 +50,11 @@
 input {
   margin-top: none;
   width: 25%;
+  margin-bottom: 25px;
+}
+
+.searchButtons button {
+  margin: 0 10px 0 10px;
 }
 
 h4 {
@@ -86,4 +93,8 @@ th {
 
 .lastTenRow {
   border-bottom: grey solid 1px;
+}
+
+button {
+  font-size: 20px;
 }

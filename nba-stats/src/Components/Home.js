@@ -69,12 +69,14 @@ function Home() {
 
             <h1>NBA Stats</h1> 
 
-            {/* refresh the page to restart the search */}
-            <button onClick={() => window.location.reload(false)}>Restart Search</button>
-
             <h4>Player Search:</h4>
             <input onKeyDown={handleKeyPress} type="text" onChange={event => setSearch(event.target.value)}></input>
-            <button onClick={handleSearch}>Search</button>
+
+            <div className='searchButtons'>
+                <button onClick={handleSearch}>Search</button>
+                {/* refresh the page to restart the search */}
+                <button onClick={() => window.location.reload(false)}>Restart Search</button>
+            </div>
             
             <div className='results' style={{display: playerSelected ? "none" : "block"}}>
 
