@@ -39,6 +39,8 @@ function Stats(props) {
         }]
     });
 
+    let [line, setLine] = useState(0);
+
     const options = {
         responsive: true,
         plugins: {
@@ -155,20 +157,33 @@ function Stats(props) {
     //put the data into data object state so that the chart component can use it
     const getChart = (stats) => {
         let tempStats = [];
+        // put all of the points into an array
         let map = stats.map((game) => game.pts);
+        //put all of the dates into an array
         let map2 = stats.map((game) => game.game.date.toString().substr(0, 10));
 
         for (let i = 0; i < map.length; i++) {
             tempStats.push({date: map2[i], points: map[i]});
         }
 
+        let colors = [];
+
+        for (let i = 0; i < map.length; i++) {
+            if (map[i] >= parseInt(line)) {
+                colors.push('rgb(0, 255, 34');
+            } else {
+                colors.push('rgb(255, 0, 0)');
+            }
+         }
+
         setData({
-            labels: stats.map((game) => game.game.date.toString().substr(0, 10)),
+            labels: map2,
             datasets: [
                 {
                     label: "Points per Game",
-                    data: stats.map((game) => game.pts),
-                    backgroundColor: 'rgb(0, 255, 34)',
+                    data: map,
+                    backgroundColor: colors,
+                    // backgroundColor: stats.map(() => 'rgb(0, 255, 34'),
                 }
             ]
         });
@@ -179,6 +194,32 @@ function Stats(props) {
         getStats();
         getPlayerName();
     },[])
+
+    const handleLineInput = () => {
+        console.log(line);
+        let temp = [];
+        let tempColors = [];
+        for (let i = 0; i < data.datasets[0].data.length; i++) {
+            // if the stat doesn't beat the line, add false to the array
+            if (data.datasets[0].data[i] >= parseInt(line)) {
+                temp.push(true);
+                tempColors.push('rgb(0, 255, 34)');
+            } else {
+                temp.push(false);
+                tempColors.push('rgb(255, 0, 0)');
+            }
+
+        }
+
+        console.log(tempColors);
+
+        setData(prev => ({
+            ...prev, 
+            datasets: {...prev.datasets, backgroundColor: tempColors}
+        }))
+
+        console.log(temp);
+    }
 
     return (
         <div className='App-header' style={{minHeight: "0"}}>
@@ -230,9 +271,13 @@ function Stats(props) {
                 </tbody>
             </table>
 
-            <div className='chart'>
+            <div className='chart points'>
                     <Bar options={options} data={data}/>
             </div>
+
+            <p>Line</p>
+            <input onKeyDown={event => setLine(event.target.value)} onChange={event => setLine(event.target.value)}></input>
+            <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
 
         </div>
     )
