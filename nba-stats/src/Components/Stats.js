@@ -22,18 +22,12 @@ function Stats(props) {
 
     let [team, setTeam] = useState(0);
 
-    let [filteredGames, setFilteredGames] = useState();
-
-    let [series, setSeries] = useState([]);
-
     let today = new Date();
     let day = String(today.getDate()).padStart(2, '0');
     let month = String(today.getMonth() + 1).padStart(2, '0');
     let year = today.getFullYear();
 
     let season = (month <= 5 ? year - 1 : year);
-
-    let [lastTenGameIds, setLastTenGameIds] = useState([]);
 
     let [lastTenPlayerStats, setLastTenPlayerStats] = useState([]);
 
@@ -50,12 +44,16 @@ function Stats(props) {
         plugins: {
           legend: {
             position: 'top',
+            labels: {color: 'white', font: {size: '20px'}}
           },
           title: {
             display: true,
             text: 'Last 10 Games',
+            color: 'white',
+            font: {size: '30px'}
           },
         },
+        
       };
 
     // get the player season average stats from the API
@@ -125,7 +123,6 @@ function Stats(props) {
                 // console.log(games);
 
                 getLastTenStats(games);
-                setFilteredGames(games);
             } 
         })
     }
@@ -139,14 +136,11 @@ function Stats(props) {
             temp1.push(games[i].id);
         }
 
-        setLastTenGameIds(temp1);
-
         //get the stats from the last 10 games using gameids
         const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + temp1[0] + "&game_ids[]=" + temp1[1] + "&game_ids[]=" + temp1[2] + "&game_ids[]=" + temp1[3] + "&game_ids[]=" + temp1[4] + "&game_ids[]=" + temp1[5] + "&game_ids[]=" + temp1[6] + "&game_ids[]=" + temp1[7] + "&game_ids[]=" + temp1[8] + "&game_ids[]=" + temp1[9];
 
         Axios.get(statsUrl).then(async (response) => {
             
-            // console.log(response);
             let temp = [];
             for (let i = 0; i < response.data.data.length; i++) {
                 temp.push(response.data.data[i]);
@@ -158,19 +152,15 @@ function Stats(props) {
         })
     }
 
+    //put the data into data object state so that the chart component can use it
     const getChart = (stats) => {
         let tempStats = [];
         let map = stats.map((game) => game.pts);
         let map2 = stats.map((game) => game.game.date.toString().substr(0, 10));
 
-        console.log(map);
-        console.log(map2);
-
         for (let i = 0; i < map.length; i++) {
             tempStats.push({date: map2[i], points: map[i]});
         }
-
-        console.log(tempStats);
 
         setData({
             labels: stats.map((game) => game.game.date.toString().substr(0, 10)),
@@ -178,6 +168,7 @@ function Stats(props) {
                 {
                     label: "Points per Game",
                     data: stats.map((game) => game.pts),
+                    backgroundColor: 'rgb(0, 255, 34)',
                 }
             ]
         });
