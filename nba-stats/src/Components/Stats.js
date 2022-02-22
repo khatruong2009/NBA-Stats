@@ -1,7 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
 import '../App.css';
-import { useLocation } from "react-router-dom";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+  } from 'chart.js/auto';
+  import { Bar } from 'react-chartjs-2';
 
 function Stats(props) {
 
@@ -13,7 +22,9 @@ function Stats(props) {
 
     let [team, setTeam] = useState(0);
 
-    let [filteredGames, setFilteredGames] = useState([]);
+    let [filteredGames, setFilteredGames] = useState();
+
+    let [series, setSeries] = useState([]);
 
     let today = new Date();
     let day = String(today.getDate()).padStart(2, '0');
@@ -25,6 +36,27 @@ function Stats(props) {
     let [lastTenGameIds, setLastTenGameIds] = useState([]);
 
     let [lastTenPlayerStats, setLastTenPlayerStats] = useState([]);
+
+    let [data, setData] = useState({
+        labels: [],
+        datasets: [{
+            label: "Points per Game",
+            data: [],
+        }]
+    });
+
+    const options = {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Last 10 Games',
+          },
+        },
+      };
 
     // get the player season average stats from the API
     const url = "https://www.balldontlie.io/api/v1/season_averages?season=" + season + "&player_ids[]=" + props.player;
@@ -90,7 +122,7 @@ function Stats(props) {
                 })));
 
                 games = games.splice(0, 10);
-                console.log(games);
+                // console.log(games);
 
                 getLastTenStats(games);
                 setFilteredGames(games);
@@ -101,6 +133,7 @@ function Stats(props) {
     //get stats for player in those last 10 games
     const getLastTenStats = (games) => {
 
+        //transfer game ids to a temp variable so we don't have to rely on state
         let temp1 = [];
         for (let i = 0; i < games.length; i++) {
             temp1.push(games[i].id);
@@ -108,23 +141,47 @@ function Stats(props) {
 
         setLastTenGameIds(temp1);
 
+        //get the stats from the last 10 games using gameids
         const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + temp1[0] + "&game_ids[]=" + temp1[1] + "&game_ids[]=" + temp1[2] + "&game_ids[]=" + temp1[3] + "&game_ids[]=" + temp1[4] + "&game_ids[]=" + temp1[5] + "&game_ids[]=" + temp1[6] + "&game_ids[]=" + temp1[7] + "&game_ids[]=" + temp1[8] + "&game_ids[]=" + temp1[9];
 
         Axios.get(statsUrl).then(async (response) => {
             
-            console.log(response);
+            // console.log(response);
             let temp = [];
             for (let i = 0; i < response.data.data.length; i++) {
                 temp.push(response.data.data[i]);
             }
 
             let temp2 = temp.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
+            getChart(temp2);
             setLastTenPlayerStats(temp2);
         })
     }
 
-    const updateStats = () => {
-        getPlayerName();
+    const getChart = (stats) => {
+        let tempStats = [];
+        let map = stats.map((game) => game.pts);
+        let map2 = stats.map((game) => game.game.date.toString().substr(0, 10));
+
+        console.log(map);
+        console.log(map2);
+
+        for (let i = 0; i < map.length; i++) {
+            tempStats.push({date: map2[i], points: map[i]});
+        }
+
+        console.log(tempStats);
+
+        setData({
+            labels: stats.map((game) => game.game.date.toString().substr(0, 10)),
+            datasets: [
+                {
+                    label: "Points per Game",
+                    data: stats.map((game) => game.pts),
+                }
+            ]
+        });
+        
     }
 
     useEffect(() => {
@@ -154,8 +211,6 @@ function Stats(props) {
                 </tbody>
             </table>
 
-            <button onClick={updateStats}>Refresh</button>
-
             <h3>{name} Last 10 Games (Played):</h3>
 
             <table className='lastTen'>
@@ -183,6 +238,10 @@ function Stats(props) {
 
                 </tbody>
             </table>
+
+            <div className='chart'>
+                    <Bar options={options} data={data}/>
+            </div>
 
         </div>
     )
