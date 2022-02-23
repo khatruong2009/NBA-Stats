@@ -7,7 +7,7 @@ import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-annotation';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
-  Chart.register([annotationPlugin]);
+Chart.register([annotationPlugin]);
 
 function Stats(props) {
 
@@ -36,13 +36,49 @@ function Stats(props) {
         }]
     });
 
+    let [assistData, setAssistData] = useState({
+        labels: [],
+        datasets: [{
+            label: "Assists per Game",
+            data: [],
+        }]
+    });
+
+    let [reboundData, setReboundData] = useState({
+        labels: [],
+        datasets: [{
+            label: "Rebounds per Game",
+            data: [],
+        }]
+    });
+
+    let [threesData, setThreesData] = useState({
+        labels: [],
+        datasets: [{
+            label: "3s per Game",
+            data: [],
+        }]
+    });
+
     let [line, setLine] = useState(0);
     
     let [lineFraction, setLineFraction] = useState("");
     let [linePercent, setLinePercent] = useState(0);
 
+    let [assistFraction, setAssistFraction] = useState("");
+    let [assistPercent, setAssistPercent] = useState(0);
+
+    let [reboundFraction, setReboundFraction] = useState("");
+    let [reboundPercent, setReboundPercent] = useState(0);
+
+    let [threesFraction, setThreesFraction] = useState("");
+    let [threesPercent, setThreesPercent] = useState(0);
+
+    let [chartDisplayed, setChartDisplayed] = useState("points");
+
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'top',
@@ -181,16 +217,20 @@ function Stats(props) {
         let map = stats.map((game) => game.pts);
         //put all of the dates into an array
         let map2 = stats.map((game) => game.game.date.toString().substr(0, 10));
+        let map3 = stats.map((game) => game.ast);
+        let map4 = stats.map((game) => game.reb);
+        let map5 = stats.map((game) => game.fg3m);
 
         for (let i = 0; i < map.length; i++) {
             tempStats.push({date: map2[i], points: map[i]});
         }
 
+        // set the colors for points
         let colors = [];
         let hitCount = 0;
 
         for (let i = 0; i < map.length; i++) {
-            if (map[i] >= parseInt(line)) {
+            if (map[i] >= parseFloat(line)) {
                 hitCount++;
                 colors.push('rgb(0, 255, 34');
             } else {
@@ -198,8 +238,57 @@ function Stats(props) {
             }
         }
 
+        //set the colors for assists
+        let assistColors = [];
+        let assistCount = 0;
+        for (let i = 0; i < map3.length; i++) {
+            if (map3[i] >= parseFloat(line)) {
+                assistCount++;
+                assistColors.push('rgb(0, 255, 34');
+            } else {
+                assistColors.push('rgb(255, 0, 0)');
+            }
+        }
+
+        //set the colors for rebounds
+        let rebColors = [];
+        let rebCount = 0;
+        for (let i = 0; i < map4.length; i++) {
+            if (map4[i] >= parseFloat(line)) {
+                rebCount++;
+                rebColors.push('rgb(0, 255, 34');
+            } else {
+                rebColors.push('rgb(255, 0, 0)');
+            }
+        }
+
+        //set the colors for 3s made
+        let threesColors = [];
+        let threesCount = 0;
+        for (let i = 0; i < map5.length; i++) {
+            if (map5[i] >= parseFloat(line)) {
+                threesCount++;
+                threesColors.push('rgb(0, 255, 34');
+            } else {
+                threesColors.push('rgb(255, 0, 0)');
+            }
+        }
+
+        //set the fraction and percentage for hitting the line
         setLineFraction(hitCount + "/" + map.length);
         setLinePercent(((hitCount / map.length) * 100).toFixed(2));
+
+        //set the fraction and percentage for hitting the line
+        setAssistFraction(assistCount + "/" + map.length);
+        setAssistPercent(((assistCount / map.length) * 100).toFixed(2));
+
+        //set the fraction and percentage for hitting the line
+        setReboundFraction(rebCount + "/" + map.length);
+        setReboundPercent(((rebCount / map.length) * 100).toFixed(2));
+
+        //set the fraction and percentage for hitting the line
+        setThreesFraction(threesCount + "/" + map.length);
+        setThreesPercent(((threesCount / map.length) * 100).toFixed(2));
 
         setData({
             labels: map2,
@@ -208,11 +297,47 @@ function Stats(props) {
                     label: "Points per Game",
                     data: map,
                     backgroundColor: colors,
-                    // backgroundColor: stats.map(() => 'rgb(0, 255, 34'),
                 }
             ]
         });
+
+        setAssistData({
+            labels: map2,
+            datasets: [
+                {
+                    label: "Assists per Game",
+                    data: map3,
+                    backgroundColor: assistColors,
+                }
+            ]
+        })
+
+        setReboundData({
+            labels: map2,
+            datasets: [
+                {
+                    label: "Rebounds per Game",
+                    data: map4,
+                    backgroundColor: rebColors,
+                }
+            ]
+        })
+
+        setThreesData({
+            labels: map2,
+            datasets: [
+                {
+                    label: "3s per Game",
+                    data: map5,
+                    backgroundColor: threesColors,
+                }
+            ]
+        })
         
+    }
+
+    const handleSwitcher = (e) => {
+        setChartDisplayed(e.target.value);
     }
 
     useEffect(() => {
@@ -242,7 +367,7 @@ function Stats(props) {
                 </tbody>
             </table>
 
-            <h3>{name} Last 10 Games (Played):</h3>
+            {/* <h3>{name} Last 10 Games (Played):</h3>
 
             <table className='lastTen'>
                 <tbody>
@@ -268,27 +393,55 @@ function Stats(props) {
                     })}
 
                 </tbody>
-            </table>
+            </table> */}
 
             <div className='chartSwitcher'>
-                <button>Points</button>
-                <button>Assists</button>
-                <button>Rebounds</button>
-                <button>3s Made</button>
+                <button onClick={handleSwitcher} value="points">Points</button>
+                <button onClick={handleSwitcher} value="assists">Assists</button>
+                <button onClick={handleSwitcher} value="rebounds">Rebounds</button>
+                <button onClick={handleSwitcher} value="threes">3s Made</button>
             </div>
 
-            <div className='chart points'>
+            <div className='chart points' style={{display: chartDisplayed == "points" ? "block" : "none"}}>
                     <Bar options={options} data={data}/>
             </div>
 
-            <div className='line'>
+            <div className='chart assists' style={{display: chartDisplayed == "assists" ? "block" : "none"}}>
+                    <Bar options={options} data={assistData}/>
+            </div>
+
+            <div className='chart rebounds' style={{display: chartDisplayed == "rebounds" ? "block" : "none"}}>
+                    <Bar options={options} data={reboundData}/>
+            </div>
+
+            <div className='chart threes' style={{display: chartDisplayed == "threes" ? "block" : "none"}}>
+                    <Bar options={options} data={threesData}/>
+            </div>
+
+            <div className='line points' style={{display: chartDisplayed == "points" ? "block" : "none"}}>
                 <p>Above the line {lineFraction} games.</p>
                 <p>Hit percentage: {linePercent}%</p>
-                <p>Line: </p>
-                <input onKeyDown={event => setLine(event.target.value)} onChange={event => setLine(event.target.value)}></input>
-                <div className='lineButton'>
-                    <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
-                </div>
+            </div>
+
+            <div className='line assists' style={{display: chartDisplayed == "assists" ? "block" : "none"}}>
+                <p>Above the line {assistFraction} games.</p>
+                <p>Hit percentage: {assistPercent}%</p>
+            </div>
+
+            <div className='line rebounds' style={{display: chartDisplayed == "rebounds" ? "block" : "none"}}>
+                <p>Above the line {reboundFraction} games.</p>
+                <p>Hit percentage: {reboundPercent}%</p>
+            </div>
+
+            <div className='line threes' style={{display: chartDisplayed == "threes" ? "block" : "none"}}>
+                <p>Above the line {threesFraction} games.</p>
+                <p>Hit percentage: {threesPercent}%</p>
+            </div>
+
+            <p>Line: </p>
+            <input onKeyDown={() => {getChart(lastTenPlayerStats)}} onChange={event => setLine(event.target.value)}></input>
+            <div className='lineButton'>
+                <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
             </div>
 
         </div>

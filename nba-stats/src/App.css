@@ -109,6 +109,8 @@ button {
 /* CHART */
 .chart {
   width: 80%;
+  position: relative;
+  height: 40vh;
 }
 
 /* line */
@@ -122,5 +124,5 @@ button {
 
 /* Chart switcher */
 .chartSwitcher button {
-  margin: ;
+  margin: 0;
 }
