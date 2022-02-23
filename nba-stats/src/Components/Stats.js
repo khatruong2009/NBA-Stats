@@ -338,6 +338,7 @@ function Stats(props) {
 
     const handleSwitcher = (e) => {
         setChartDisplayed(e.target.value);
+        setLine(0);
     }
 
     useEffect(() => {
