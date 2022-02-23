@@ -440,7 +440,7 @@ function Stats(props) {
             </div>
 
             <p>Line: </p>
-            <input inputMode='decimal' onKeyDown={() => {getChart(lastTenPlayerStats)}} onChange={event => setLine(event.target.value)}></input>
+            <input inputMode='decimal' onKeyDown={() => {getChart(lastTenPlayerStats)}} onChange={event => {setLine(event.target.value)}}></input>
             <div className='lineButton'>
                 <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
             </div>

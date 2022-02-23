@@ -68,7 +68,7 @@ function Home() {
     return (
         <header className="App-header">
 
-            <h1>NBA Stats</h1> 
+            <h1>Props Ninja: NBA</h1> 
 
             <h4>Player Search:</h4>
             <input onKeyDown={handleKeyPress} type="text" onChange={event => setSearch(event.target.value)}></input>
