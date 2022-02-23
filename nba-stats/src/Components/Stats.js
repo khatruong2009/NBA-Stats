@@ -86,7 +86,7 @@ function Stats(props) {
           },
           title: {
             display: true,
-            text: 'Last 10 Games',
+            text: 'Last 10 Games (If Played)',
             color: 'white',
             font: {size: '30px'}
           },
