@@ -2,6 +2,7 @@
   text-align: center;
   padding-bottom: 10%;
   background-color: #282c34;
+  max-width: 100vw;
 }
 
 .App-logo {
@@ -47,6 +48,19 @@
 }
 
 /*Home Page CSS*/
+input {
+  font-size: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+  button {
+    border-radius: 0px;
+  }
+
+  .results li {
+    font-size: 25px;
+  }
+}
 
 .playerList {
   list-style: none;
@@ -123,6 +137,11 @@ button {
 }
 
 /* Chart switcher */
+.chartSwitcher {
+  width: 100vw;
+}
+
 .chartSwitcher button {
   margin: 0;
+  font-size: 1em;
 }

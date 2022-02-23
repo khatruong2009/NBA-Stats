@@ -397,10 +397,10 @@ function Stats(props) {
             </table> */}
 
             <div className='chartSwitcher'>
-                <button onClick={handleSwitcher} value="points">Points</button>
-                <button onClick={handleSwitcher} value="assists">Assists</button>
-                <button onClick={handleSwitcher} value="rebounds">Rebounds</button>
-                <button onClick={handleSwitcher} value="threes">3s Made</button>
+                <button style={{backgroundColor: chartDisplayed == "points" ? "green" : "white", color: chartDisplayed == "points" ? "white" : "black"}} onClick={handleSwitcher} value="points">Points</button>
+                <button style={{backgroundColor: chartDisplayed == "assists" ? "green" : "white", color: chartDisplayed == "assists" ? "white" : "black"}} onClick={handleSwitcher} value="assists">Assists</button>
+                <button style={{backgroundColor: chartDisplayed == "rebounds" ? "green" : "white", color: chartDisplayed == "rebounds" ? "white" : "black"}} onClick={handleSwitcher} value="rebounds">Rebounds</button>
+                <button style={{backgroundColor: chartDisplayed == "threes" ? "green" : "white", color: chartDisplayed == "threes" ? "white" : "black"}} onClick={handleSwitcher} value="threes">3s Made</button>
             </div>
 
             <div className='chart points' style={{display: chartDisplayed == "points" ? "block" : "none"}}>
@@ -440,7 +440,7 @@ function Stats(props) {
             </div>
 
             <p>Line: </p>
-            <input onKeyDown={() => {getChart(lastTenPlayerStats)}} onChange={event => setLine(event.target.value)}></input>
+            <input inputMode='decimal' onKeyDown={() => {getChart(lastTenPlayerStats)}} onChange={event => setLine(event.target.value)}></input>
             <div className='lineButton'>
                 <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
             </div>

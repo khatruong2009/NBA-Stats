@@ -44,6 +44,7 @@ function Home() {
     const handleKeyPress = (e) => {
         if (e.keyCode == 13) {
             handleSearch();
+            e.target.blur();
         }
     }
 
