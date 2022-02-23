@@ -40,6 +40,9 @@ function Stats(props) {
     });
 
     let [line, setLine] = useState(0);
+    
+    let [lineFraction, setLineFraction] = useState("");
+    let [linePercent, setLinePercent] = useState(0);
 
     const options = {
         responsive: true,
@@ -167,14 +170,19 @@ function Stats(props) {
         }
 
         let colors = [];
+        let hitCount = 0;
 
         for (let i = 0; i < map.length; i++) {
             if (map[i] >= parseInt(line)) {
+                hitCount++;
                 colors.push('rgb(0, 255, 34');
             } else {
                 colors.push('rgb(255, 0, 0)');
             }
-         }
+        }
+
+        setLineFraction(hitCount + "/" + map.length);
+        setLinePercent(((hitCount / map.length) * 100).toFixed(2));
 
         setData({
             labels: map2,
@@ -194,32 +202,6 @@ function Stats(props) {
         getStats();
         getPlayerName();
     },[])
-
-    const handleLineInput = () => {
-        console.log(line);
-        let temp = [];
-        let tempColors = [];
-        for (let i = 0; i < data.datasets[0].data.length; i++) {
-            // if the stat doesn't beat the line, add false to the array
-            if (data.datasets[0].data[i] >= parseInt(line)) {
-                temp.push(true);
-                tempColors.push('rgb(0, 255, 34)');
-            } else {
-                temp.push(false);
-                tempColors.push('rgb(255, 0, 0)');
-            }
-
-        }
-
-        console.log(tempColors);
-
-        setData(prev => ({
-            ...prev, 
-            datasets: {...prev.datasets, backgroundColor: tempColors}
-        }))
-
-        console.log(temp);
-    }
 
     return (
         <div className='App-header' style={{minHeight: "0"}}>
@@ -275,9 +257,15 @@ function Stats(props) {
                     <Bar options={options} data={data}/>
             </div>
 
-            <p>Line</p>
-            <input onKeyDown={event => setLine(event.target.value)} onChange={event => setLine(event.target.value)}></input>
-            <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
+            <div className='line'>
+                <p>Above the line {lineFraction} games.</p>
+                <p>Hit percentage: {linePercent}%</p>
+                <p>Line</p>
+                <input onKeyDown={event => setLine(event.target.value)} onChange={event => setLine(event.target.value)}></input>
+                <div className='lineButton'>
+                    <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
+                </div>
+            </div>
 
         </div>
     )

@@ -110,3 +110,12 @@ button {
 .chart {
   width: 80%;
 }
+
+/* line */
+.line p {
+  margin: 10px 0 10px 0;
+}
+
+.line input {
+  margin: 10px 0 10px 0;
+}
