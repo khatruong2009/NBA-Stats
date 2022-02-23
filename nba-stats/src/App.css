@@ -61,6 +61,10 @@ input {
     border-radius: 0px;
   }
 
+  .resultsList {
+    padding: 10px;
+  }
+
   .results li {
     font-size: 25px;
   }

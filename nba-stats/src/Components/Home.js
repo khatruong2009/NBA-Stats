@@ -84,7 +84,7 @@ function Home() {
             <div className='results' style={{display: playerSelected ? "none" : "block"}}>
 
                 <h5>Results:</h5>
-                <ul>
+                <ul className='resultsList'>
                     {playerList.map(function(player) {
                         return  <li value = {player.id} onClick={handleSelect} onMouseOver={handleHover} onMouseLeave={handleLeave} className='playerList' key= {player.id}>{player.first_name} {player.last_name} - {player.team.full_name}</li>
                     })}
