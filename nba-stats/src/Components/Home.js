@@ -68,6 +68,8 @@ function Home() {
     return (
         <header className="App-header">
 
+            {/* <img src="props-logo.png"></img> */}
+
             <h1>Props Ninja: NBA</h1> 
 
             <h4>Player Search:</h4>

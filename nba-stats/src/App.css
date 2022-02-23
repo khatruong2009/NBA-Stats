@@ -48,6 +48,10 @@
 }
 
 /*Home Page CSS*/
+img {
+  height: 20vh;
+}
+
 input {
   font-size: 20px;
 }
