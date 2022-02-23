@@ -1,16 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
 import '../App.css';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-  } from 'chart.js/auto';
-  import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto';
+import {Chart} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import 'chartjs-plugin-annotation';
+import annotationPlugin from 'chartjs-plugin-annotation';
+
+  Chart.register([annotationPlugin]);
 
 function Stats(props) {
 
@@ -57,8 +54,28 @@ function Stats(props) {
             color: 'white',
             font: {size: '30px'}
           },
+          annotation: {
+            annotations: {
+                line: {
+                    type: 'line',
+                    scaleID: 'y',
+                    value: line,
+                    borderColor: 'rgb(255, 255, 0)',
+                    borderWidth: 2,
+                    mode: 'horizontal',
+                    drawtime: 'afterDatasetsDraw',
+                    backgroundColor: 'rgb(255, 255, 0)',
+                    label: {
+                        font: {
+                            weight: 'normal'
+                        }, 
+                        rotation: 'auto',
+                        enabled: true,
+                    }
+                }
+            }
+          },
         },
-        
       };
 
     // get the player season average stats from the API
@@ -253,6 +270,13 @@ function Stats(props) {
                 </tbody>
             </table>
 
+            <div className='chartSwitcher'>
+                <button>Points</button>
+                <button>Assists</button>
+                <button>Rebounds</button>
+                <button>3s Made</button>
+            </div>
+
             <div className='chart points'>
                     <Bar options={options} data={data}/>
             </div>
@@ -260,7 +284,7 @@ function Stats(props) {
             <div className='line'>
                 <p>Above the line {lineFraction} games.</p>
                 <p>Hit percentage: {linePercent}%</p>
-                <p>Line</p>
+                <p>Line: </p>
                 <input onKeyDown={event => setLine(event.target.value)} onChange={event => setLine(event.target.value)}></input>
                 <div className='lineButton'>
                     <button type='number' onClick={() => {getChart(lastTenPlayerStats)}}>Set Line</button>
