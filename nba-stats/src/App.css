@@ -56,6 +56,15 @@ input {
   font-size: 20px;
 }
 
+.mobileSwitcher {
+  display: none;
+}
+
+.mobileSwitcher select {
+  font-size: 25px;
+  width: 60vw;
+}
+
 @media only screen and (max-width: 600px) {
   button {
     border-radius: 0px;
@@ -67,6 +76,14 @@ input {
 
   .results li {
     font-size: 25px;
+  }
+
+  .chartSwitcher {
+    display: none;
+  }
+
+  .mobileSwitcher {
+    display: block;
   }
 }
 
