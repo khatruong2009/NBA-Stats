@@ -198,8 +198,6 @@ function Stats(props) {
         const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + temp1[0] + "&game_ids[]=" + temp1[1] + "&game_ids[]=" + temp1[2] + "&game_ids[]=" + temp1[3] + "&game_ids[]=" + temp1[4] + "&game_ids[]=" + temp1[5] + "&game_ids[]=" + temp1[6] + "&game_ids[]=" + temp1[7] + "&game_ids[]=" + temp1[8] + "&game_ids[]=" + temp1[9];
 
         Axios.get(statsUrl).then(async (response) => {
-
-            console.log(response);
             
             let temp = [];
             for (let i = 0; i < response.data.data.length; i++) {

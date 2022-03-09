@@ -15,9 +15,10 @@ function Home() {
     let [playerSelected, setPlayerSelected] = useState(false);
 
     //get the player name from the API
-    const url = "https://www.balldontlie.io/api/v1/players?per_page=10&search=" + search;
+    // const url = "https://www.balldontlie.io/api/v1/players?per_page=10&search=" + search;
 
-    const getPlayer = () => {
+    const getPlayer = (name) => {
+        const url = "https://www.balldontlie.io/api/v1/players?per_page=4&search=" + name;
         Axios.get(url).then(async (response) => {
 
             // console.log(response);
@@ -46,6 +47,9 @@ function Home() {
             handleSearch();
             e.target.blur();
         }
+
+        setSearch(e.target.value);
+        getPlayer(e.target.value);
     }
 
     // change styles for when a player is hovered over
@@ -70,10 +74,11 @@ function Home() {
 
             {/* <img src="props-logo.png"></img> */}
 
-            <h1>Props Ninja: NBA</h1> 
+            <h1>Props Ninja: NBA</h1>
 
             <h4>Player Search:</h4>
-            <input onKeyDown={handleKeyPress} type="text" onChange={event => setSearch(event.target.value)}></input>
+            {/* <input onKeyDown={handleKeyPress} type="text" onChange={event => setSearch(event.target.value)}></input> */}
+            <input type="text" onChange={handleKeyPress}></input>
 
             <div className='searchButtons'>
                 <button onClick={handleSearch}>Search</button>

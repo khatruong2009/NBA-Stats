@@ -65,28 +65,6 @@ input {
   width: 60vw;
 }
 
-@media only screen and (max-width: 600px) {
-  button {
-    border-radius: 0px;
-  }
-
-  .resultsList {
-    padding: 10px;
-  }
-
-  .results li {
-    font-size: 25px;
-  }
-
-  .chartSwitcher {
-    display: none;
-  }
-
-  .mobileSwitcher {
-    display: block;
-  }
-}
-
 .playerList {
   list-style: none;
   margin-top: 25px;
@@ -169,4 +147,42 @@ button {
 .chartSwitcher button {
   margin: 0;
   font-size: 1em;
+}
+
+@media only screen and (max-width: 600px) {
+  button {
+    border-radius: 0px;
+  }
+
+  .resultsList {
+    padding: 10px;
+    margin: 0px;
+  }
+
+  .playerList {
+    margin-top: 5px;
+  }
+
+  .results h5 {
+    margin-top: 5%;
+    margin-bottom: 0%;
+  }
+
+  .chartSwitcher {
+    display: none;
+  }
+
+  .mobileSwitcher {
+    display: block;
+  }
+
+  .results {
+    width: 100vw;
+  }
+
+  .results ul li {
+    font-size: 20px;
+    border: 1px white solid;
+    padding: 1%;
+  }
 }
