@@ -123,6 +123,18 @@ function Stats(props) {
             }
           },
         },
+        scales: {
+            y: {
+                ticks: {
+                    color: '#FFFFFF'
+                }
+            }, 
+            x: {
+                ticks: {
+                    color: '#FFFFFF',
+                }
+            }
+        }
       };
 
     // get the player season average stats from the API
