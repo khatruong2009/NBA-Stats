@@ -60,6 +60,14 @@ function Stats(props) {
         }]
     });
 
+    let [turnoversData, setTurnoversData] = useState({
+        labels: [],
+        datasets: [{
+            label: "Turnovers per Game",
+            data: [],
+        }]
+    });
+
     let [line, setLine] = useState(0);
     
     let [lineFraction, setLineFraction] = useState("");
@@ -73,6 +81,9 @@ function Stats(props) {
 
     let [threesFraction, setThreesFraction] = useState("");
     let [threesPercent, setThreesPercent] = useState(0);
+
+    let [turnoversFraction, setTurnoversFraction] = useState("");
+    let [turnoversPercent, setTurnoversPercent] = useState(0);
 
     let [chartDisplayed, setChartDisplayed] = useState("points");
 
@@ -221,6 +232,8 @@ function Stats(props) {
         let map4 = stats.map((game) => game.reb);
         let map5 = stats.map((game) => game.fg3m);
 
+        let map6 = stats.map((game) => game.turnover);
+
         for (let i = 0; i < map.length; i++) {
             tempStats.push({date: map2[i], points: map[i]});
         }
@@ -274,6 +287,18 @@ function Stats(props) {
             }
         }
 
+        //set the colors for turnovers
+        let turnoversColors = [];
+        let turnoversCount = 0;
+        for (let i = 0; i < map6.length; i++) {
+            if (map5[i] >= parseFloat(line)) {
+                turnoversCount++;
+                turnoversColors.push('rgb(0, 255, 34');
+            } else {
+                turnoversColors.push('rgb(255, 0, 0)');
+            }
+        }
+
         //set the fraction and percentage for hitting the line
         setLineFraction(hitCount + "/" + map.length);
         setLinePercent(((hitCount / map.length) * 100).toFixed(2));
@@ -289,6 +314,10 @@ function Stats(props) {
         //set the fraction and percentage for hitting the line
         setThreesFraction(threesCount + "/" + map.length);
         setThreesPercent(((threesCount / map.length) * 100).toFixed(2));
+
+        //set the fraction and percentage for hitting the line
+        setTurnoversFraction(turnoversCount + "/" + map.length);
+        setTurnoversPercent(((turnoversCount / map.length) * 100).toFixed(2));
 
         setData({
             labels: map2,
@@ -330,6 +359,17 @@ function Stats(props) {
                     label: "3s per Game",
                     data: map5,
                     backgroundColor: threesColors,
+                }
+            ]
+        })
+
+        setTurnoversData({
+            labels: map2,
+            datasets: [
+                {
+                    label: "Turnovers per Game",
+                    data: map6,
+                    backgroundColor: turnoversColors,
                 }
             ]
         })
@@ -401,6 +441,7 @@ function Stats(props) {
                 <button style={{backgroundColor: chartDisplayed == "assists" ? "green" : "white", color: chartDisplayed == "assists" ? "white" : "black"}} onClick={handleSwitcher} value="assists">Assists</button>
                 <button style={{backgroundColor: chartDisplayed == "rebounds" ? "green" : "white", color: chartDisplayed == "rebounds" ? "white" : "black"}} onClick={handleSwitcher} value="rebounds">Rebounds</button>
                 <button style={{backgroundColor: chartDisplayed == "threes" ? "green" : "white", color: chartDisplayed == "threes" ? "white" : "black"}} onClick={handleSwitcher} value="threes">3s Made</button>
+                <button style={{backgroundColor: chartDisplayed == "turnovers" ? "green" : "white", color: chartDisplayed == "turnovers" ? "white" : "black"}} onClick={handleSwitcher} value="turnovers">Turnovers</button>
             </div>
 
             <div className='mobileSwitcher'>
@@ -409,6 +450,7 @@ function Stats(props) {
                     <option onClick={handleSwitcher} value="assists">Assists</option>
                     <option onClick={handleSwitcher} value="rebounds">Rebounds</option>
                     <option onClick={handleSwitcher} value="threes">3s Made</option>
+                    <option onClick={handleSwitcher} value="turnovers">Turnovers</option>
                 </select>
             </div>
 
@@ -426,6 +468,10 @@ function Stats(props) {
 
             <div className='chart threes' style={{display: chartDisplayed == "threes" ? "block" : "none"}}>
                     <Bar options={options} data={threesData}/>
+            </div>
+
+            <div className='chart turnovers' style={{display: chartDisplayed == "turnovers" ? "block" : "none"}}>
+                    <Bar options={options} data={turnoversData}/>
             </div>
 
             <div className='line points' style={{display: chartDisplayed == "points" ? "block" : "none"}}>
@@ -446,6 +492,11 @@ function Stats(props) {
             <div className='line threes' style={{display: chartDisplayed == "threes" ? "block" : "none"}}>
                 <p>Above the line {threesFraction} games.</p>
                 <p>Hit percentage: {threesPercent}%</p>
+            </div>
+
+            <div className='line turnovers' style={{display: chartDisplayed == "turnovers" ? "block" : "none"}}>
+                <p>Above the line {turnoversFraction} games.</p>
+                <p>Hit percentage: {turnoversPercent}%</p>
             </div>
 
             <p>Line: </p>
