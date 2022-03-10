@@ -238,8 +238,9 @@ function Stats(props) {
         let tempStats = [];
         // put all of the points into an array
         let map = stats.map((game) => game.pts);
+        console.log(stats);
         //put all of the dates into an array
-        let map2 = stats.map((game) => game.game.date.toString().substr(0, 10));
+        let map2 = stats.map((game) => game.game.date.toString().substr(5, 5));
         let map3 = stats.map((game) => game.ast);
         let map4 = stats.map((game) => game.reb);
         let map5 = stats.map((game) => game.fg3m);
