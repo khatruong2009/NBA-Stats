@@ -132,6 +132,9 @@ function Stats(props) {
             x: {
                 ticks: {
                     color: '#FFFFFF',
+                    font: {
+                        // size: 15
+                    }
                 }
             }
         }
@@ -304,7 +307,7 @@ function Stats(props) {
         let turnoversColors = [];
         let turnoversCount = 0;
         for (let i = 0; i < map6.length; i++) {
-            if (map5[i] >= parseFloat(line)) {
+            if (map6[i] >= parseFloat(line)) {
                 turnoversCount++;
                 turnoversColors.push('rgb(0, 255, 34');
             } else {
