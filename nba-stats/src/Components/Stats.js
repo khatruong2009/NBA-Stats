@@ -230,7 +230,12 @@ function Stats(props) {
                 temp.push(response.data.data[i]);
             }
 
+            // sort the games by ID so that we get the newest ones first
             let temp2 = temp.sort((a, b) => (a.game.id > b.game.id) ? -1 : 1);
+
+            // filter out the games that the player didn't play
+            temp2 = temp2.filter(game => game.min !== "00");
+
             getChart(temp2);
             setLastTenPlayerStats(temp2);
         })
@@ -247,7 +252,6 @@ function Stats(props) {
         let map3 = stats.map((game) => game.ast);
         let map4 = stats.map((game) => game.reb);
         let map5 = stats.map((game) => game.fg3m);
-
         let map6 = stats.map((game) => game.turnover);
 
         for (let i = 0; i < map.length; i++) {
