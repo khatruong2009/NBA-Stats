@@ -203,8 +203,7 @@ function Stats(props) {
                     return false;
                 })));
 
-                games = games.splice(0, 10);
-                // console.log(games);
+                // games = games.splice(0, 10);
 
                 getLastTenStats(games);
             } 
@@ -220,8 +219,13 @@ function Stats(props) {
             temp1.push(games[i].id);
         }
 
+        let statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player;
+        for (let i = 0; i < 25; i++) {
+            statsUrl += "&game_ids[]=" + temp1[i];
+        }
+
         //get the stats from the last 10 games using gameids
-        const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + temp1[0] + "&game_ids[]=" + temp1[1] + "&game_ids[]=" + temp1[2] + "&game_ids[]=" + temp1[3] + "&game_ids[]=" + temp1[4] + "&game_ids[]=" + temp1[5] + "&game_ids[]=" + temp1[6] + "&game_ids[]=" + temp1[7] + "&game_ids[]=" + temp1[8] + "&game_ids[]=" + temp1[9];
+        // const statsUrl = "https://www.balldontlie.io/api/v1/stats/?player_ids[]=" + props.player + "&game_ids[]=" + temp1[0] + "&game_ids[]=" + temp1[1] + "&game_ids[]=" + temp1[2] + "&game_ids[]=" + temp1[3] + "&game_ids[]=" + temp1[4] + "&game_ids[]=" + temp1[5] + "&game_ids[]=" + temp1[6] + "&game_ids[]=" + temp1[7] + "&game_ids[]=" + temp1[8] + "&game_ids[]=" + temp1[9];
 
         Axios.get(statsUrl).then(async (response) => {
             
@@ -235,6 +239,8 @@ function Stats(props) {
 
             // filter out the games that the player didn't play
             temp2 = temp2.filter(game => game.min !== "00");
+
+            temp2 = temp2.slice(0, 10);
 
             getChart(temp2);
             setLastTenPlayerStats(temp2);
